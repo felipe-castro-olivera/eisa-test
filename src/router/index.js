@@ -1,7 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from "vue-router";
 
-import Nomina from "@/views/Home.vue";
+import Nomina from "@/views/Nomina.vue";
 import Empresa from "@/views/Empresa.vue";
 import Gastos from "@/views/Gastos.vue";
 import Informes from "@/views/Informes.vue";
