@@ -6,7 +6,7 @@ import Empresa from "@/views/Empresa.vue";
 import Gastos from "@/views/Gastos.vue";
 import Informes from "@/views/Informes.vue";
 import Tramites from "@/views/Tramites.vue";
-// import AgregarEmpleado from '../views/AgregarEmpleado.vue';
+import AgregarEmpleado from '../views/AgregarEmpleado.vue';
 
 const routes = [
   {
@@ -34,11 +34,11 @@ const routes = [
     name: "tramites",
     component: Tramites,
   },
-  // {
-  //   path: '/agregar-empleado',
-  //   name: 'agregar-empleado',
-  //   component: AgregarEmpleado,
-  // },
+  {
+    path: '/agregar-empleado',
+    name: 'agregar-empleado',
+    component: AgregarEmpleado,
+  },
 ];
 
 const router = createRouter({

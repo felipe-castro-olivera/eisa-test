@@ -1,12 +1,29 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import useEmployees from "@/composables/employees";
+import BaseProgressLinear from "@/components/BaseProgressLinear.vue";
+import BaseCard from "@/components/BaseCard.vue";
 
-const { employees, getEmployees } = useEmployees();
+const { employees, getEmployees, deleteEmployee } = useEmployees();
+const dialog = ref(false);
+const idEmployee = ref(null);
 
 onMounted(() => {
   getEmployees();
 });
+
+function confirmationDialog(_uuid) {
+  dialog.value = true;
+  idEmployee.value = _uuid;
+}
+
+const employeeToDelete = async (id) => {
+  const response = await deleteEmployee(id);
+  console.log(response);
+  getEmployees();
+  dialog.value = false;
+  idEmployee.value = false;
+};
 </script>
 
 <template>
@@ -15,9 +32,20 @@ onMounted(() => {
       <v-row class="py-4 px-2">
         Empleados
         <v-spacer></v-spacer>
-        <v-btn icon="mdi-plus" size="large" color="primary"></v-btn
-      ></v-row>
+        <v-tooltip text="Agregar empleado">
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon="mdi-plus"
+              size="large"
+              color="primary"
+              to="agregar-empleado"
+            ></v-btn>
+          </template>
+        </v-tooltip>
+      </v-row>
     </v-card-title>
+    <base-progress-linear v-if="Object.keys(employees).length === 0" />
     <v-table>
       <thead>
         <tr>
@@ -58,10 +86,27 @@ onMounted(() => {
             <v-icon small class="mr-2" @click="editItem(employee)">
               mdi-pencil
             </v-icon>
-            <v-icon small @click="deleteItem(employee)"> mdi-delete </v-icon>
+            <v-icon small @click="confirmationDialog(employee._uuid)">
+              mdi-delete
+            </v-icon>
           </td>
         </tr>
       </tbody>
     </v-table>
   </v-card>
+
+  <v-dialog v-model="dialog" width="auto">
+    <base-card>
+      <template v-slot:title> Confirmación </template>
+      <template v-slot:content>
+        ¿Está segur@ que desea eliminar este empleado?
+      </template>
+      <template v-slot:actions>
+        <v-btn color="red" text @click="employeeToDelete(idEmployee)">
+          Eliminar
+        </v-btn>
+        <v-btn color="#016ff6" text @click.stop="dialog = false"> Salir </v-btn>
+      </template>
+    </base-card>
+  </v-dialog>
 </template>

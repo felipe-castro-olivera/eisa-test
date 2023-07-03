@@ -12,7 +12,7 @@ export default function useEmployees() {
   const getEmployees = async () => {
     try {
       // let response = await axios.get("https://crudcrud.com/api/57a6eed1d3bc4ef587f50d2e7411950a/employees", {
-        console.log("Fetching all employees...")
+      console.log("Fetching all employees...");
       let response = await axios.get(
         "https://us-east4.gcp.data.mongodb-api.com/app/api-endpoints-ewdzk/endpoint/employees"
       );
@@ -24,19 +24,17 @@ export default function useEmployees() {
   };
 
   const getEmployee = async (id) => {
-    let response = await http.get(`/api/employees/${id}`);
+    let response = await axios.get(`/api/employees/${id}`);
     employee.value = response.data;
   };
 
-  const storeemployee = async (data) => {
+  const storeEmployee = async (data) => {
     errors.value = [];
     try {
-      await http.post("/api/employees", data);
+      await axios.post("/api/employees", data);
       await router.push({ name: "employees.index" });
     } catch (e) {
       if (e.response.status === 400) {
-        //Bad request, for validation in .net core
-
         for (const key in e.response.data.errors) {
           errors.value.push(e.response.data.errors[key][0]);
         }
@@ -44,16 +42,13 @@ export default function useEmployees() {
     }
   };
 
-  const updateemployee = async (id) => {
+  const updateEmployee = async (id) => {
     errors.value = [];
     try {
-      // http method must be put for match put method in .net core api
-      await http.put(`/api/employees/${id}`, employee.value);
+      await axios.put(`/api/employees/${id}`, employee.value);
       await router.push({ name: "employees.index" });
     } catch (e) {
       if (e.response.status === 400) {
-        //Bad request, for validation
-
         for (const key in e.response.data.errors) {
           errors.value.push(e.response.data.errors[key][0]);
         }
@@ -61,8 +56,14 @@ export default function useEmployees() {
     }
   };
 
-  const destroyemployee = async (id) => {
-    await http.delete(`/api/employees/${id}`);
+  const deleteEmployee = async (_id) => {
+    console.log(_id);
+    const response = await axios.delete(
+      `https://us-east4.gcp.data.mongodb-api.com/app/api-endpoints-ewdzk/endpoint/employee?id=${_id}`
+    );
+
+    console.log("DELETE-EMPLOYEE>", response);
+    return response;
   };
 
   return {
@@ -70,9 +71,9 @@ export default function useEmployees() {
     employees,
     getEmployee,
     getEmployees,
-    storeemployee,
-    updateemployee,
-    destroyemployee,
+    storeEmployee,
+    updateEmployee,
+    deleteEmployee,
     errors,
   };
 }
