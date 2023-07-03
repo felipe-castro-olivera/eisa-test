@@ -1,6 +1,14 @@
-# base
+# EISA Software 2023
 
-## Project setup
+# Descripción
+Software para manejo de recursos humanos (Nóminas, Gastos, Informes, etc.). Desarrollado en JavaScript usando [Vue.js 3](https://vuejs.org/) como framework. (Todavía en desarrollo).
+
+## NOTA
+Este proyecto usa la API de [{crud:api}](https://crudapi.co.uk/) para el CRUD. Dado un error de CORS en desarrollo, se implementó una API como pasarela usando [MongoDB App Services](https://www.mongodb.com/atlas/app-services), ya que ambos se encuentran en los servidores de Google. Las API's que se usan en el front, solo funcionan como puente y no se almacena información alguna en MongoDB.
+
+
+## Configuración del proyecto
+Para iniciar el proyecto, en la línea de comandos puedes escribir:
 
 ```
 # yarn
@@ -13,7 +21,7 @@ npm install
 pnpm install
 ```
 
-### Compiles and hot-reloads for development
+### Para compilar en desarrollo
 
 ```
 # yarn
@@ -26,7 +34,7 @@ npm run dev
 pnpm dev
 ```
 
-### Compiles and minifies for production
+### Compilar para producción
 
 ```
 # yarn
@@ -39,19 +47,6 @@ npm run build
 pnpm build
 ```
 
-### Lints and fixes files
+## Algunas capturas
 
-```
-# yarn
-yarn lint
 
-# npm
-npm run lint
-
-# pnpm
-pnpm lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://vitejs.dev/config/).
