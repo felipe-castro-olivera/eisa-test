@@ -1,148 +1,94 @@
+<script setup>
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import useMiscellaneous from "@/composables/miscellaneous";
+import useEmployees from "@/composables/employees";
+
+const router = useRouter();
+const { roles, getRoles } = useMiscellaneous();
+const { saveEmployee } = useEmployees();
+
+const valid = ref(false);
+const nombreEmpleado = ref("");
+const apellidoEmpleado = ref("");
+const role = ref(null);
+
+const nameRules = ref([
+  (value) => {
+    if (value) return true;
+    return "Nombre es requerido.";
+  },
+  (value) => {
+    if (value?.length <= 10) return true;
+    return "Name must be less than 10 characters.";
+  },
+]);
+const roleRules = ref([
+  (value) => {
+    if (value) return true;
+    return "Debes seleccionar un rol.";
+  },
+]);
+
+onMounted(() => {
+  getRoles();
+});
+
+async function storeEmployee() {
+  const data = {
+    firstName: nombreEmpleado.value,
+    lastName: apellidoEmpleado.value,
+    role: role.value,
+  };
+  const response = await saveEmployee(data);
+  router.push("/");
+}
+</script>
+
 <template>
-  <v-container fluid>
-    <base-card class="ma-5">
-      <template v-slot:title>Agregar empleado</template>
-      <template v-slot:content>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-row class="mt-5 mx-2">
-            <v-col>
-              <v-text-field
-                v-model="primerNombre"
-                :counter="20"
-                :rules="nombreReglas"
-                label="Primer nombre"
-                @keyup="mayuscula"
-                required
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="segundoNombre"
-                :counter="20"
-                :rules="nombreReglas"
-                label="Segundo nombre"
-                outlined
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row class="mx-2">
-            <v-col>
-              <v-text-field
-                v-model.trim="primerApellido"
-                :counter="20"
-                :rules="nombreReglas"
-                label="Primer apellido"
-                @keyup="mayuscula"
-                required
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field
-                v-model="segundoApellido"
-                :counter="20"
-                :rules="nombreReglas"
-                label="Segundo apellido"
-                @keyup="mayuscula"
-                required
-                outlined
-              ></v-text-field>
-            </v-col>
-          </v-row>
-          <v-row class="mx-2">
-            <v-col>
-              <v-select
-                v-model="paisSeleccionado"
-                :items="paises"
-                label="País del empleo"
-                required
-                outlined
-              ></v-select>
-            </v-col>
-            <v-col>
-              <v-select
-                v-model="tipoIdentificacionSeleccionada"
-                :items="tipoIdentificacion"
-                label="Tipo de identificación"
-                required
-                outlined
-              ></v-select>
-            </v-col>
-          </v-row>
+  <v-container>
+    <v-row no-gutters>
+      <v-col cols="12" sm="6">
+        <v-sheet class="ma-2 pa-2">
+          <div class="text-h6 text-center">Agregar empleado</div>
+          <v-form v-model="valid">
+            <v-container fluid>
+              <v-row>
+                <v-text-field
+                  v-model="nombreEmpleado"
+                  :rules="nameRules"
+                  label="Nombre"
+                  required
+                ></v-text-field>
+              </v-row>
 
-          <v-btn
-            :disabled="!valid"
-            color="primary"
-            @click="validate"
-            
-          >
-            Enviar
-          </v-btn>
-        </v-form>
-      </template>
-    </base-card>
+              <v-row cols="12" md="4">
+                <v-text-field
+                  v-model="apellidoEmpleado"
+                  :rules="nameRules"
+                  label="Apellido"
+                  required
+                ></v-text-field>
+              </v-row>
 
-    <v-fab-transition>
-      <v-btn to="/" color="#1B76BC" fab large bottom fixed>
-        <v-icon color="white">mdi-arrow-collapse-left</v-icon>
-      </v-btn>
-    </v-fab-transition>
+              <v-row cols="12" md="4">
+                <v-select
+                  v-model="role"
+                  label="Selecciona rol"
+                  :items="roles"
+                  item-title="role"
+                  item-value="role"
+                  :rules="roleRules"
+                  required
+                ></v-select>
+              </v-row>
+            </v-container>
+            <v-btn :disabled="!valid" @click="storeEmployee" color="primary">
+              Guardar
+            </v-btn>
+          </v-form>
+        </v-sheet>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
-
-<script>
-import BaseCard from '@/components/BaseCard.vue';
-
-export default {
-  components: { BaseCard },
-  data: () => ({
-    valid: true,
-    primerNombre: '',
-    segundoNombre: '',
-    primerApellido: '',
-    segundoApellido: '',
-    paises: ['Colombia', 'Estados Unidos'],
-    paisSeleccionado: '',
-    paisEmpleoSeleccionado: '',
-    tipoIdentificacion: ['CC', 'CE', 'P', 'PE'],
-    tipoIdentificacionSeleccionada: 'CC',
-    numeroIdentificacion: '',
-    email: '',
-    fechaIngreso: '2022/01/01',
-    fechaRegistro: '07/03/2023 10:15:30',
-    area: [
-      'Administración',
-      'Financiera',
-      'Compras',
-      'Infraestructura',
-      'Operación',
-      'Sistemas',
-      'Talento Humano',
-      'Servicios Varios',
-    ],
-    areaSeleccionada: '',
-    nombreReglas: [
-      (v) => !!v || 'Campo requerido',
-      (v) => (v && v.length <= 20) || 'Debe ser menor a 20 caracteres',
-      (v) => {
-        const pattern = new RegExp('^[a-zA-Z]+$');
-        return pattern.test(v) || 'No se permite caracteres especiales ni ñ';
-      },
-    ],
-    emailRules: [
-      (v) => !!v || 'E-mail is required',
-      (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-    ],
-  }),
-
-  methods: {
-    validate() {
-      this.$refs.form.validate();
-    },
-    mayuscula(e) {
-      e.target.value = e.target.value.toUpperCase();
-    },
-  },
-};
-</script>

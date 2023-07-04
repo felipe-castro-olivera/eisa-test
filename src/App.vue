@@ -5,7 +5,11 @@
 
     <v-main>
       <v-container fluid>
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+          <transition name="slide" mode="out-in">
+            <component :is="Component" :key="$route.path"></component>
+          </transition>
+        </router-view>
       </v-container>
       <the-footer />
     </v-main>
@@ -20,3 +24,15 @@ import TheFooter from "@/components/TheFooter.vue";
 
 const drawer = ref(true);
 </script>
+
+<style lang="css">
+.slide-enter-active,
+.slide-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+}
+</style>

@@ -17,7 +17,6 @@ export default function useEmployees() {
         "https://us-east4.gcp.data.mongodb-api.com/app/api-endpoints-ewdzk/endpoint/employees"
       );
       employees.value = response.data.items;
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -28,17 +27,16 @@ export default function useEmployees() {
     employee.value = response.data;
   };
 
-  const storeEmployee = async (data) => {
+  const saveEmployee = async (data) => {
     errors.value = [];
     try {
-      await axios.post("/api/employees", data);
-      await router.push({ name: "employees.index" });
+      const response = await axios.post(
+        "https://us-east4.gcp.data.mongodb-api.com/app/api-endpoints-ewdzk/endpoint/employees",
+        data
+      );
+      return response;
     } catch (e) {
-      if (e.response.status === 400) {
-        for (const key in e.response.data.errors) {
-          errors.value.push(e.response.data.errors[key][0]);
-        }
-      }
+      console.log(e);
     }
   };
 
@@ -57,12 +55,10 @@ export default function useEmployees() {
   };
 
   const deleteEmployee = async (_id) => {
-    console.log(_id);
+    console.log("Deleting employee...");
     const response = await axios.delete(
       `https://us-east4.gcp.data.mongodb-api.com/app/api-endpoints-ewdzk/endpoint/employee?id=${_id}`
     );
-
-    console.log("DELETE-EMPLOYEE>", response);
     return response;
   };
 
@@ -71,7 +67,7 @@ export default function useEmployees() {
     employees,
     getEmployee,
     getEmployees,
-    storeEmployee,
+    saveEmployee,
     updateEmployee,
     deleteEmployee,
     errors,
